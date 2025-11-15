@@ -54,6 +54,11 @@ pub struct InitProperty<'info> {
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     pub usdc_mint: InterfaceAccount<'info, Mint>,
+    /// CHECK: Metadata PDA validated in handler using Metaplex seeds.
+    #[account(mut)]
+    pub metadata: UncheckedAccount<'info>,
+    /// CHECK: Metaplex Token Metadata program id enforced during CPI.
+    pub token_metadata_program: UncheckedAccount<'info>,
     /// CHECK: ATA is created within init_property; future instructions validate stored key.
     #[account(mut)]
     pub vault_shares_ata: UncheckedAccount<'info>,

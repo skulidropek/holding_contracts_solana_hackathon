@@ -24,6 +24,7 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { PropertyShares } from "../target/types/property_shares";
 
 // CHANGE: Replace placeholder test with coverage for property tokenization flows.
@@ -31,7 +32,7 @@ import { PropertyShares } from "../target/types/property_shares";
 // QUOTE(TЗ): "Написать Anchor-тесты" (см. раздел 6) covering init_property, buy_shares, deposit_yield, claim.
 // REF: REQ-INIT,REQ-BUY,REQ-DEPOSIT,REQ-CLAIM
 // SOURCE: n/a
-describe("holding_contracts", () => {
+describe("property_shares", () => {
   // CHANGE: Use `accountsStrict` to satisfy Anchor TS typing by explicitly specifying every account.
   // WHY: TypeScript error TS2353 occurred because `.accounts` disallows PDA-resolvable entries such as `property`.
   // QUOTE(TЗ): "Верификация: через линтер" — type errors break verification stage.
@@ -46,7 +47,9 @@ describe("holding_contracts", () => {
   const SCALE = new BN("1000000000000");
 
   const propertyId = `villa-${Date.now().toString(36)}`;
-  const metadataUri = "https://example.com/property.json";
+const metadataUri = "https://raw.githubusercontent.com/skulidropek/holding_contracts_solana_hackathon/main/config/metadata/villa-alpha.json";
+const metadataName = "Villa Test Share";
+const metadataSymbol = "VTES";
   const totalShares = new BN(1_000);
   const pricePerShare = new BN(2_000_000); // 2 USDC with 6 decimals
 
@@ -59,6 +62,7 @@ describe("holding_contracts", () => {
   let vaultPda: PublicKey;
   let poolPda: PublicKey;
   let mintPda: PublicKey;
+  let metadataPda: PublicKey;
   let vaultSharesAta: PublicKey;
   let vaultUsdcAta: PublicKey;
   let poolUsdcAta: PublicKey;
@@ -146,6 +150,7 @@ describe("holding_contracts", () => {
     [mintPda] = deriveMintPda(propertyPda);
     [vaultPda] = deriveVaultPda(propertyPda);
     [poolPda] = derivePoolPda(propertyPda);
+    [metadataPda] = deriveMetadataPda(mintPda);
     userRewardPda = PublicKey.findProgramAddressSync(
       [
         Buffer.from("user_reward"),
@@ -177,7 +182,14 @@ describe("holding_contracts", () => {
     );
 
     await program.methods
-      .initProperty(propertyId, totalShares, metadataUri, pricePerShare)
+      .initProperty(
+        propertyId,
+        totalShares,
+        metadataName,
+        metadataSymbol,
+        metadataUri,
+        pricePerShare
+      )
       .accountsStrict({
         authority: wallet.publicKey,
         property: propertyPda,
@@ -185,6 +197,8 @@ describe("holding_contracts", () => {
         pool: poolPda,
         mint: mintPda,
         usdcMint,
+        metadata: metadataPda,
+        tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
         vaultSharesAta,
         vaultUsdcAta,
         poolUsdcAta,
@@ -551,6 +565,7 @@ describe("holding_contracts", () => {
     const [secondaryMint] = deriveMintPda(secondaryProperty);
     const [secondaryVault] = deriveVaultPda(secondaryProperty);
     const [secondaryPool] = derivePoolPda(secondaryProperty);
+    const [secondaryMetadata] = deriveMetadataPda(secondaryMint);
     const secondaryVaultShares = getAssociatedTokenAddressSync(
       secondaryMint,
       secondaryVault,
@@ -574,7 +589,14 @@ describe("holding_contracts", () => {
     );
 
     await program.methods
-      .initProperty(id, new BN(1), metadataUri, new BN(1_000_000))
+      .initProperty(
+        id,
+        new BN(1),
+        `${metadataName}-${id}`,
+        `${metadataSymbol.slice(0, 4)}${id.slice(-2).toUpperCase()}`,
+        metadataUri,
+        new BN(1_000_000)
+      )
       .accountsStrict({
         authority: wallet.publicKey,
         property: secondaryProperty,
@@ -582,6 +604,8 @@ describe("holding_contracts", () => {
         pool: secondaryPool,
         mint: secondaryMint,
         usdcMint,
+        metadata: secondaryMetadata,
+        tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
         vaultSharesAta: secondaryVaultShares,
         vaultUsdcAta: secondaryVaultUsdc,
         poolUsdcAta: secondaryPoolUsdc,
@@ -602,3 +626,9 @@ describe("holding_contracts", () => {
     };
   };
 });
+  const mpProgramId = new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
+  const deriveMetadataPda = (mint: PublicKey): [PublicKey, number] =>
+    PublicKey.findProgramAddressSync(
+      [Buffer.from("metadata"), mpProgramId.toBuffer(), mint.toBuffer()],
+      mpProgramId
+    );

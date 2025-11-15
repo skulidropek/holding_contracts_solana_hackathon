@@ -11,6 +11,10 @@ pub enum ErrorCode {
     PropertyIdTooLong,
     #[msg("Metadata URI too long")]
     MetadataUriTooLong,
+    #[msg("Metadata name too long")]
+    MetadataNameTooLong,
+    #[msg("Metadata symbol too long")]
+    MetadataSymbolTooLong,
     #[msg("Total shares must be greater than zero")]
     ZeroTotalShares,
     #[msg("Amount must be greater than zero")]
@@ -31,4 +35,8 @@ pub enum ErrorCode {
     RewardUnderflow,
     #[msg("User reward PDA does not match caller or pool")]
     RewardAccountMismatch,
+    #[msg("Invalid metadata PDA")]
+    InvalidMetadata,
+    #[msg("Invalid token metadata program")]
+    InvalidMetadataProgram,
 }

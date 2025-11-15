@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token,
+    metadata::{self, CreateMetadataAccountsV3},
     token_interface::{self, MintTo, Transfer},
 };
 
@@ -28,12 +29,22 @@ pub mod property_shares {
         ctx: Context<InitProperty>,
         property_id: String,
         total_shares: u64,
+        metadata_name: String,
+        metadata_symbol: String,
         metadata_uri: String,
         price_per_share: u64,
     ) -> Result<()> {
         require!(
             property_id.len() <= MAX_PROPERTY_ID_LEN,
             ContractError::PropertyIdTooLong
+        );
+        require!(
+            metadata_name.len() <= MAX_METADATA_NAME_LEN,
+            ContractError::MetadataNameTooLong
+        );
+        require!(
+            metadata_symbol.len() <= MAX_METADATA_SYMBOL_LEN,
+            ContractError::MetadataSymbolTooLong
         );
         require!(
             metadata_uri.len() <= MAX_METADATA_URI_LEN,
@@ -95,6 +106,14 @@ pub mod property_shares {
             signer,
         );
         token_interface::mint_to(mint_to_ctx, total_shares)?;
+
+        create_metadata(
+            &ctx,
+            metadata_name,
+            metadata_symbol,
+            ctx.accounts.property.metadata_uri.clone(),
+            signer,
+        )?;
 
         Ok(())
     }
@@ -269,6 +288,62 @@ pub mod property_shares {
         ctx.accounts.property.active = false;
         Ok(())
     }
+}
+
+fn create_metadata(
+    ctx: &Context<InitProperty>,
+    name: String,
+    symbol: String,
+    uri: String,
+    signer: &[&[&[u8]]],
+) -> Result<()> {
+    let expected_metadata = Pubkey::find_program_address(
+        &[METADATA_SEED, metadata::ID.as_ref(), ctx.accounts.mint.key().as_ref()],
+        &metadata::ID,
+    )
+    .0;
+    require_keys_eq!(
+        ctx.accounts.metadata.key(),
+        expected_metadata,
+        ContractError::InvalidMetadata
+    );
+    require_keys_eq!(
+        ctx.accounts.token_metadata_program.key(),
+        metadata::ID,
+        ContractError::InvalidMetadataProgram
+    );
+
+    let data = metadata::mpl_token_metadata::types::DataV2 {
+        name,
+        symbol,
+        uri,
+        seller_fee_basis_points: 0,
+        creators: None,
+        collection: None,
+        uses: None,
+    };
+
+    metadata::create_metadata_accounts_v3(
+        CpiContext::new_with_signer(
+            ctx.accounts.token_metadata_program.to_account_info(),
+            CreateMetadataAccountsV3 {
+                metadata: ctx.accounts.metadata.to_account_info(),
+                mint: ctx.accounts.mint.to_account_info(),
+                mint_authority: ctx.accounts.vault.to_account_info(),
+                payer: ctx.accounts.authority.to_account_info(),
+                update_authority: ctx.accounts.authority.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                rent: ctx.accounts.rent.to_account_info(),
+            },
+            signer,
+        ),
+        data,
+        true,
+        true,
+        None,
+    )?;
+
+    Ok(())
 }
 
 fn initialize_associated_accounts(ctx: &Context<InitProperty>) -> Result<()> {

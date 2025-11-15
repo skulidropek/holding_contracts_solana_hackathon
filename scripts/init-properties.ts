@@ -6,6 +6,7 @@ import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -21,6 +22,8 @@ type PropertyConfig = {
   propertyId: string;
   totalShares: number;
   metadataUri: string;
+  tokenName: string;
+  tokenSymbol: string;
   pricePerShare: number;
   usdcMint: string;
 };
@@ -29,6 +32,7 @@ const PROPERTY_SEED = Buffer.from("property");
 const VAULT_SEED = Buffer.from("vault");
 const POOL_SEED = Buffer.from("pool");
 const MINT_SEED = Buffer.from("property_mint");
+const METADATA_SEED = Buffer.from("metadata");
 
 const CONFIG_PATH = path.resolve(__dirname, "../config/properties.json");
 
@@ -70,6 +74,14 @@ function derivePoolPda(programId: PublicKey, property: PublicKey): PublicKey {
   return pda;
 }
 
+function deriveMetadataPda(mint: PublicKey): PublicKey {
+  const [pda] = PublicKey.findProgramAddressSync(
+    [METADATA_SEED, TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+    TOKEN_METADATA_PROGRAM_ID,
+  );
+  return pda;
+}
+
 async function main(): Promise<void> {
   const configs = await loadConfig();
   if (configs.length === 0) {
@@ -87,6 +99,7 @@ async function main(): Promise<void> {
     const vaultPda = deriveVaultPda(program.programId, propertyPda);
     const poolPda = derivePoolPda(program.programId, propertyPda);
     const mintPda = deriveMintPda(program.programId, propertyPda);
+    const metadataPda = deriveMetadataPda(mintPda);
 
     const usdcMint = new PublicKey(entry.usdcMint);
     const vaultSharesAta = getAssociatedTokenAddressSync(mintPda, vaultPda, true);
@@ -98,6 +111,8 @@ async function main(): Promise<void> {
         .initProperty(
           entry.propertyId,
           new BN(entry.totalShares),
+          entry.tokenName,
+          entry.tokenSymbol,
           entry.metadataUri,
           new BN(entry.pricePerShare),
         )
@@ -111,6 +126,8 @@ async function main(): Promise<void> {
           vaultSharesAta,
           vaultUsdcAta,
           poolUsdcAta,
+          metadata: metadataPda,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,

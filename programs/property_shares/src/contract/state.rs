@@ -17,7 +17,7 @@ pub struct Property {
 }
 
 impl Property {
-    pub const INIT_SPACE: usize = 8 + 32 + 8 + 4 + MAX_METADATA_URI_LEN + 32 + 1;
+    pub const INIT_SPACE: usize = 8 + 32 + 8 + (4 + MAX_METADATA_URI_LEN) + 32 + 1;
 }
 
 #[account]
