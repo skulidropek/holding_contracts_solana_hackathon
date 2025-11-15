@@ -108,7 +108,13 @@ pub mod property_shares {
         token_interface::mint_to(mint_to_ctx, total_shares)?;
 
         create_metadata(
-            &ctx,
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.vault.to_account_info(),
+            ctx.accounts.authority.to_account_info(),
+            ctx.accounts.metadata.to_account_info(),
+            ctx.accounts.token_metadata_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+            ctx.accounts.rent.to_account_info(),
             metadata_name,
             metadata_symbol,
             ctx.accounts.property.metadata_uri.clone(),
@@ -288,27 +294,84 @@ pub mod property_shares {
         ctx.accounts.property.active = false;
         Ok(())
     }
+
+    pub fn init_metadata_only(
+        ctx: Context<InitMetadata>,
+        metadata_name: String,
+        metadata_symbol: String,
+        metadata_uri: String,
+    ) -> Result<()> {
+        require!(
+            metadata_name.len() <= MAX_METADATA_NAME_LEN,
+            ContractError::MetadataNameTooLong
+        );
+        require!(
+            metadata_symbol.len() <= MAX_METADATA_SYMBOL_LEN,
+            ContractError::MetadataSymbolTooLong
+        );
+        require!(
+            metadata_uri.len() <= MAX_METADATA_URI_LEN,
+            ContractError::MetadataUriTooLong
+        );
+        require_keys_eq!(
+            ctx.accounts.authority.key(),
+            ctx.accounts.property.authority,
+            ContractError::Unauthorized
+        );
+
+        let property_key = ctx.accounts.property.key();
+        let (expected_vault, vault_bump) =
+            Pubkey::find_program_address(&[VAULT_SEED, property_key.as_ref()], &crate::ID);
+        require_keys_eq!(
+            ctx.accounts.vault.key(),
+            expected_vault,
+            ContractError::InvalidVault
+        );
+        let vault_bump_seed = [vault_bump];
+        let vault_signer: &[&[u8]] = &[VAULT_SEED, property_key.as_ref(), &vault_bump_seed];
+        let signer = &[vault_signer];
+
+        ctx.accounts.property.metadata_uri = metadata_uri.clone();
+
+        create_metadata(
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.vault.to_account_info(),
+            ctx.accounts.authority.to_account_info(),
+            ctx.accounts.metadata.to_account_info(),
+            ctx.accounts.token_metadata_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+            ctx.accounts.rent.to_account_info(),
+            metadata_name,
+            metadata_symbol,
+            metadata_uri,
+            signer,
+        )?;
+
+        Ok(())
+    }
 }
 
-fn create_metadata(
-    ctx: &Context<InitProperty>,
+fn create_metadata<'info>(
+    mint: AccountInfo<'info>,
+    vault: AccountInfo<'info>,
+    authority: AccountInfo<'info>,
+    metadata_account: AccountInfo<'info>,
+    token_metadata_program: AccountInfo<'info>,
+    system_program: AccountInfo<'info>,
+    rent: AccountInfo<'info>,
     name: String,
     symbol: String,
     uri: String,
     signer: &[&[&[u8]]],
 ) -> Result<()> {
     let expected_metadata = Pubkey::find_program_address(
-        &[METADATA_SEED, metadata::ID.as_ref(), ctx.accounts.mint.key().as_ref()],
+        &[METADATA_SEED, metadata::ID.as_ref(), mint.key.as_ref()],
         &metadata::ID,
     )
     .0;
+    require_keys_eq!(metadata_account.key(), expected_metadata, ContractError::InvalidMetadata);
     require_keys_eq!(
-        ctx.accounts.metadata.key(),
-        expected_metadata,
-        ContractError::InvalidMetadata
-    );
-    require_keys_eq!(
-        ctx.accounts.token_metadata_program.key(),
+        token_metadata_program.key(),
         metadata::ID,
         ContractError::InvalidMetadataProgram
     );
@@ -325,15 +388,15 @@ fn create_metadata(
 
     metadata::create_metadata_accounts_v3(
         CpiContext::new_with_signer(
-            ctx.accounts.token_metadata_program.to_account_info(),
+            token_metadata_program,
             CreateMetadataAccountsV3 {
-                metadata: ctx.accounts.metadata.to_account_info(),
-                mint: ctx.accounts.mint.to_account_info(),
-                mint_authority: ctx.accounts.vault.to_account_info(),
-                payer: ctx.accounts.authority.to_account_info(),
-                update_authority: ctx.accounts.authority.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
+                metadata: metadata_account,
+                mint,
+                mint_authority: vault,
+                payer: authority.clone(),
+                update_authority: authority,
+                system_program,
+                rent,
             },
             signer,
         ),

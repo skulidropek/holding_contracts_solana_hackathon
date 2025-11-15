@@ -75,6 +75,28 @@ pub struct InitProperty<'info> {
 }
 
 #[derive(Accounts)]
+pub struct InitMetadata<'info> {
+    pub authority: Signer<'info>,
+    #[account(mut, has_one = authority)]
+    pub property: Account<'info, Property>,
+    #[account(
+        mut,
+        has_one = property,
+        has_one = mint,
+    )]
+    pub vault: Account<'info, Vault>,
+    #[account(mut)]
+    pub mint: InterfaceAccount<'info, Mint>,
+    /// CHECK: validated against PDA seeds inside handler
+    #[account(mut)]
+    pub metadata: UncheckedAccount<'info>,
+    /// CHECK: program id enforced at runtime
+    pub token_metadata_program: UncheckedAccount<'info>,
+    pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
+}
+
+#[derive(Accounts)]
 pub struct BuyShares<'info> {
     #[account(mut, has_one = mint)]
     pub property: Account<'info, Property>,

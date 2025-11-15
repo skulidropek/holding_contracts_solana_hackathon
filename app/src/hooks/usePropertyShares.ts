@@ -113,6 +113,14 @@ export const usePropertyShares = (): PropertyActions => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // CHANGE: Log key user actions to help diagnose repeated Phantom prompts.
+  // WHY: Пользователь попросил “залогировать фронт часть” для отслеживания транзакций.
+  // QUOTE(TЗ): "Залогируй фронт часть Что бы отслеживать как работать"
+  // REF: USER-LOGS
+  const logEvent = (label: string, payload: Record<string, unknown> = {}): void => {
+    console.debug(`[property_shares] ${label}`, payload);
+  };
+
   const ensureActionContext = (): ActionContext => {
     if (!program || !wallet || !provider) {
       throw new Error("Подключите кошелёк Phantom для выполнения транзакций.");
@@ -124,6 +132,7 @@ export const usePropertyShares = (): PropertyActions => {
     if (!program) {
       return;
     }
+    logEvent("refresh:start", { entries: CONFIGS.length });
     setLoading(true);
     setError(null);
     try {
@@ -146,9 +155,9 @@ export const usePropertyShares = (): PropertyActions => {
               pricePerShareUi: config.pricePerShare / USDC_FACTOR,
               availableShares: 0n,
               userShares: 0n,
-               userUsdcBalance: 0n,
-               userUsdcAta: null,
-               userSharesAta: null,
+              userUsdcBalance: 0n,
+              userUsdcAta: null,
+              userSharesAta: null,
               pendingRewards: 0n,
               isAuthority: false,
               addresses,
@@ -219,8 +228,10 @@ export const usePropertyShares = (): PropertyActions => {
         }),
       );
       setProperties(views);
+      logEvent("refresh:completed", { initialized: views.filter((v) => v.isInitialized).length });
     } catch (refreshError) {
       setError((refreshError as Error).message);
+      logEvent("refresh:error", { message: (refreshError as Error).message });
     } finally {
       setLoading(false);
     }
@@ -246,11 +257,13 @@ export const usePropertyShares = (): PropertyActions => {
   const runAction = async (action: () => Promise<void>) => {
     setLoading(true);
     setError(null);
+    logEvent("action:start", {});
     try {
       await action();
       await refresh();
     } catch (actionError) {
       setError((actionError as Error).message);
+      logEvent("action:error", { message: (actionError as Error).message });
     } finally {
       setLoading(false);
     }
@@ -264,6 +277,7 @@ export const usePropertyShares = (): PropertyActions => {
       const { program: liveProgram, wallet: liveWallet, provider: liveProvider } =
         ensureActionContext();
       const view = findView(propertyId);
+      logEvent("buyShares", { propertyId, amount });
       const userUsdcAta = await ensureAtaExists(
         connection,
         liveProvider,
@@ -305,6 +319,7 @@ export const usePropertyShares = (): PropertyActions => {
       if (!view.isAuthority) {
         throw new Error("Только authority может депонировать доход.");
       }
+      logEvent("depositYield", { propertyId, microUsdc });
       const authorityUsdcAta = await ensureAtaExists(
         connection,
         liveProvider,
@@ -335,6 +350,7 @@ export const usePropertyShares = (): PropertyActions => {
       if (view.userShares === 0n) {
         throw new Error("Нет долей для получения дохода.");
       }
+      logEvent("claim", { propertyId });
       const userSharesAta = await ensureAtaExists(
         connection,
         liveProvider,

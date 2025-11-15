@@ -268,6 +268,75 @@ export type PropertyShares = {
       ]
     },
     {
+      "name": "initMetadataOnly",
+      "discriminator": [
+        226,
+        231,
+        249,
+        112,
+        130,
+        184,
+        93,
+        157
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "property"
+          ]
+        },
+        {
+          "name": "property",
+          "writable": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "metadata",
+          "writable": true
+        },
+        {
+          "name": "tokenMetadataProgram"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "metadataName",
+          "type": "string"
+        },
+        {
+          "name": "metadataSymbol",
+          "type": "string"
+        },
+        {
+          "name": "metadataUri",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "initProperty",
       "discriminator": [
         102,

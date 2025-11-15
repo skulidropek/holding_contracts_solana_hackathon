@@ -6,7 +6,7 @@ import {
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -35,6 +35,7 @@ const MINT_SEED = Buffer.from("property_mint");
 const METADATA_SEED = Buffer.from("metadata");
 
 const CONFIG_PATH = path.resolve(__dirname, "../config/properties.json");
+const METADATA_PROGRAM_ID = new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
 
 async function loadConfig(): Promise<PropertyConfig[]> {
   const raw = await fs.readFile(CONFIG_PATH, "utf-8");
@@ -76,8 +77,8 @@ function derivePoolPda(programId: PublicKey, property: PublicKey): PublicKey {
 
 function deriveMetadataPda(mint: PublicKey): PublicKey {
   const [pda] = PublicKey.findProgramAddressSync(
-    [METADATA_SEED, TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-    TOKEN_METADATA_PROGRAM_ID,
+    [METADATA_SEED, METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+    METADATA_PROGRAM_ID,
   );
   return pda;
 }
@@ -127,7 +128,7 @@ async function main(): Promise<void> {
           vaultUsdcAta,
           poolUsdcAta,
           metadata: metadataPda,
-          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+          tokenMetadataProgram: METADATA_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
@@ -137,6 +138,27 @@ async function main(): Promise<void> {
       console.log(`✅ Property ${entry.propertyId} initialized (mint ${mintPda.toBase58()})`);
     } catch (error) {
       console.error(`❌ Failed to init ${entry.propertyId}:`, (error as Error).message);
+      try {
+        await program.methods
+          .initMetadataOnly(entry.tokenName, entry.tokenSymbol, entry.metadataUri)
+          .accountsStrict({
+            authority: provider.wallet.publicKey,
+            property: propertyPda,
+            vault: vaultPda,
+            mint: mintPda,
+            metadata: metadataPda,
+            tokenMetadataProgram: METADATA_PROGRAM_ID,
+            systemProgram: SystemProgram.programId,
+            rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+          })
+          .rpc();
+        console.log(`🔁 Metadata refreshed for ${entry.propertyId}`);
+      } catch (metadataError) {
+        console.error(
+          `❌ Failed to refresh metadata for ${entry.propertyId}:`,
+          (metadataError as Error).message,
+        );
+      }
     }
   }
 }
