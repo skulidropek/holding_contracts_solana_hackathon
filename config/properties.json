@@ -4,6 +4,7 @@
     "totalShares": 1000,
     "metadataUri": "https://raw.githubusercontent.com/skulidropek/holding_contracts_solana_hackathon/main/config/metadata/villa-alpha.json",
     "pricePerShare": 2000000,
-    "usdcMint": "Gh9ZwEmdLJ8DscKNTwdyHhTXGSy8fPq3TC5CkE4k9Wo3"
+    "_comment": "// CHANGE: Use devnet test USDC mint created via spl-token create-token.\\n// WHY: Стандартный Gh9Z... отсутствует на devnet, из-за чего init_property падал с AccountNotInitialized.\\n// QUOTE(TЗ): \"А токены создались или как? ... yarn init-properties\"\\n// REF: USER-DEPLOY\\n// SOURCE: solana account Gh9Z... показал AccountNotFound",
+    "usdcMint": "Qkw4FajST5m3z9dtcD5QwX5cn1WfiAcmVsNhqtgJBvB"
   }
 ]

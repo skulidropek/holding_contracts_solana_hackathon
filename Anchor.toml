@@ -5,24 +5,27 @@ package_manager = "yarn"
 resolution = true
 skip-lint = false
 
-# CHANGE: Align Anchor workspace program name with property token architecture.
-# WHY: Old `meme_token` label no longer describes functionality and confused tooling.
-# QUOTE(TЗ): "переиминовать проект ... что бы он правильно описывал"
-# REF: USER-RENAME
+# CHANGE: Declare program IDs for both local validator runs and devnet deploys.
+# WHY: Удобнее держать один и тот же id для разных кластеров, чтобы Anchor понимал куда деплоить.
+# QUOTE(TЗ): "Можешь исправить? ... Anchor всё ещё лезет на локальный валидатор"
+# REF: USER-DEPLOY
 # SOURCE: n/a
 [programs.localnet]
+property_shares = "Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z"
+
+[programs.devnet]
 property_shares = "Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z"
 
 [registry]
 url = "https://api.apr.dev"
 
-# CHANGE: Point provider at localnet to give deterministic test airdrops.
-# WHY: Devnet airdrops frequently fail and break automated REQ validation.
-# QUOTE(TЗ): "Тесты (минимум)" require reliable execution.
-# REF: REQ-INIT
-# SOURCE: n/a
 [provider]
-cluster = "localnet"
+# CHANGE: Жёстко прописываем devnet-URL, чтобы Anchor не пытался использовать localnet даже при неверных env.
+# WHY: Пользователь запускал deploy с переменными окружения, но CLI игнорировал их и соединялся с локальным RPC.
+# QUOTE(TЗ): "Anchor deploy всё ещё шлёт на http://127.0.0.1"
+# REF: USER-DEPLOY
+# SOURCE: https://www.anchor-lang.com/docs/anchor-toml#provider
+cluster = "https://api.devnet.solana.com"
 wallet = "~/.config/solana/id.json"
 
 # CHANGE: Register ts-node for Anchor tests so .ts suites transpile before execution.
