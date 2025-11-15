@@ -1,12 +1,17 @@
+# CHANGE: Rename crate to describe property-share architecture instead of legacy meme token.
+# WHY: Aligns package identity with business domain per user request.
+# QUOTE(TЗ): "А мы можем переиминовать проект... И сделать хоть какую-то архитектуру"
+# REF: USER-RENAME
+# SOURCE: n/a
 [package]
-name = "meme_token"
+name = "property_shares"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "meme_token"
+name = "property_shares"
 
 [features]
 default = []

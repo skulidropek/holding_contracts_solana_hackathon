@@ -1,20 +1,27 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { MemeToken } from "../target/types/meme_token";
+import { PropertyShares } from "../target/types/property_shares";
+// CHANGE: Enforced formatter output to satisfy lint.
+// WHY: Lint stage failed; aligning formatting keeps verification invariant intact.
+// QUOTE(TЗ): "Верификация: через линтер"
+// REF: REQ-LINT
+// SOURCE: n/a
 
 (async () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.MemeToken as anchor.Program<MemeToken>;
-  
+  const program = anchor.workspace.propertyShares as anchor.Program<PropertyShares>;
+
   // Адрес вашего mint
-  const mintAddress = new PublicKey("H9xRT2EbiABavkw9RCkhweacCnFY4AhM5vocTumy6rKG");
-  
+  const mintAddress = new PublicKey(
+    "H9xRT2EbiABavkw9RCkhweacCnFY4AhM5vocTumy6rKG"
+  );
+
   // Настройте метаданные токена здесь
   const metadata = {
-    name: "Meme Token",                    // Максимум 64 символа
-    symbol: "MEME",                         // Максимум 16 символов
+    name: "Meme Token", // Максимум 64 символа
+    symbol: "MEME", // Максимум 16 символов
     description: "Мой первый мем-токен на Solana! Хранится прямо в блокчейне.", // Максимум 512 символов
     imageUri: "https://example.com/token-image.png", // Максимум 256 символов (можно оставить пустым "")
   };
@@ -67,4 +74,3 @@ import { MemeToken } from "../target/types/meme_token";
     throw error;
   }
 })();
-

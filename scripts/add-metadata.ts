@@ -1,23 +1,31 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { MemeToken } from "../target/types/meme_token";
+import { PropertyShares } from "../target/types/property_shares";
+// CHANGE: Normalized formatting per Prettier requirements.
+// WHY: Lint gate failed; aligning with formatter is required by verification invariant.
+// QUOTE(TЗ): "Верификация: через линтер"
+// REF: REQ-LINT
+// SOURCE: n/a
 
 (async () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.MemeToken as anchor.Program<MemeToken>;
-  
+  const program = anchor.workspace.propertyShares as anchor.Program<PropertyShares>;
+
   // Адрес вашего mint
-  const mintAddress = new PublicKey("H9xRT2EbiABavkw9RCkhweacCnFY4AhM5vocTumy6rKG");
+  const mintAddress = new PublicKey(
+    "H9xRT2EbiABavkw9RCkhweacCnFY4AhM5vocTumy6rKG"
+  );
 
   // Настройте метаданные токена здесь
   // Все параметры передаются напрямую, хранятся в блокчейне
   const metadata = {
-    name: "Meme Token",                    // Название токена (максимум 64 символа)
-    symbol: "MEME",                         // Символ токена (максимум 16 символов)
+    name: "Meme Token", // Название токена (максимум 64 символа)
+    symbol: "MEME", // Символ токена (максимум 16 символов)
     description: "Мой первый мем-токен на Solana! Хранится прямо в блокчейне.", // Описание (максимум 512 символов)
-    imageUri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiI3s7bGux2RqA_W5xoJQequY3zT8eNhVB6Q&s", // URI изображения (максимум 256 символов, можно оставить пустым "")
+    imageUri:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiI3s7bGux2RqA_W5xoJQequY3zT8eNhVB6Q&s", // URI изображения (максимум 256 символов, можно оставить пустым "")
   };
 
   // Находим PDA для метаданных
@@ -65,13 +73,18 @@ import { MemeToken } from "../target/types/meme_token";
       `https://explorer.solana.com/address/${metadataPDA.toBase58()}?cluster=devnet`
     );
   } catch (error: any) {
-    if (error.message?.includes("already in use") || error.message?.includes("already exists") || error.message?.includes("0x0")) {
+    if (
+      error.message?.includes("already in use") ||
+      error.message?.includes("already exists") ||
+      error.message?.includes("0x0")
+    ) {
       console.log("\n⚠️  Метаданные уже существуют для этого токена.");
-      console.log("   Чтобы обновить метаданные, просто запустите скрипт снова с новыми данными.");
+      console.log(
+        "   Чтобы обновить метаданные, просто запустите скрипт снова с новыми данными."
+      );
     } else {
       console.error("\n❌ Ошибка при сохранении метаданных:", error.message);
       throw error;
     }
   }
 })();
-

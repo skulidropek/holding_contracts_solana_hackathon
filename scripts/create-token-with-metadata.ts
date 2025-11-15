@@ -1,25 +1,32 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
-import { MemeToken } from "../target/types/meme_token";
+import { PropertyShares } from "../target/types/property_shares";
+// CHANGE: Format script per Prettier lint expectations.
+// WHY: Lint pipeline rejected prior formatting; aligning ensures lint verification passes.
+// QUOTE(TЗ): "Верификация: через линтер"
+// REF: REQ-LINT
+// SOURCE: n/a
 
 (async () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.MemeToken as anchor.Program<MemeToken>;
+  const program = anchor.workspace.propertyShares as anchor.Program<PropertyShares>;
 
   // Настройте параметры нового токена здесь
   const tokenConfig = {
     // Уникальный seed для нового токена (можно использовать любое имя)
     seed: "my_new_token_v1",
-    
+
     // Метаданные токена (хранятся в блокчейне)
     name: "My Awesome Token",
     symbol: "MAT",
-    description: "Это новый токен с метаданными, созданный одной транзакцией! Все данные хранятся в блокчейне.",
-    imageUri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiI3s7bGux2RqA_W5xoJQequY3zT8eNhVB6Q&s",
-    
+    description:
+      "Это новый токен с метаданными, созданный одной транзакцией! Все данные хранятся в блокчейне.",
+    imageUri:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiI3s7bGux2RqA_W5xoJQequY3zT8eNhVB6Q&s",
+
     // Decimals (не используется сейчас, фиксировано 6)
     decimals: 6,
   };
@@ -75,8 +82,14 @@ import { MemeToken } from "../target/types/meme_token";
     console.log("   Transaction:", tx);
     console.log("");
     console.log("🔗 Проверьте в Explorer:");
-    console.log("   Mint:", `https://explorer.solana.com/address/${mintPDA.toBase58()}?cluster=devnet`);
-    console.log("   Metadata:", `https://explorer.solana.com/address/${metadataPDA.toBase58()}?cluster=devnet`);
+    console.log(
+      "   Mint:",
+      `https://explorer.solana.com/address/${mintPDA.toBase58()}?cluster=devnet`
+    );
+    console.log(
+      "   Metadata:",
+      `https://explorer.solana.com/address/${metadataPDA.toBase58()}?cluster=devnet`
+    );
     console.log("");
     console.log("💡 Метаданные являются частью токена!");
     console.log("   Они хранятся в блокчейне и связаны с mint через PDA.");
@@ -90,4 +103,3 @@ import { MemeToken } from "../target/types/meme_token";
     }
   }
 })();
-

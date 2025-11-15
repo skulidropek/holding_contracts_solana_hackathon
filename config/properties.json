@@ -1,0 +1,9 @@
+[
+  {
+    "propertyId": "villa-alpha",
+    "totalShares": 1000,
+    "metadataUri": "https://raw.githubusercontent.com/skulidropek/holding_contracts_solana_hackathon/main/config/metadata/villa-alpha.json",
+    "pricePerShare": 2000000,
+    "usdcMint": "Gh9ZwEmdLJ8DscKNTwdyHhTXGSy8fPq3TC5CkE4k9Wo3"
+  }
+]

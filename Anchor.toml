@@ -5,15 +5,30 @@ package_manager = "yarn"
 resolution = true
 skip-lint = false
 
+# CHANGE: Align Anchor workspace program name with property token architecture.
+# WHY: Old `meme_token` label no longer describes functionality and confused tooling.
+# QUOTE(TЗ): "переиминовать проект ... что бы он правильно описывал"
+# REF: USER-RENAME
+# SOURCE: n/a
 [programs.localnet]
-meme_token = "DfBeWM1aM3dtXvyydD2wfDFc9XwcpodCqBmgdXtBRzPm"
+property_shares = "DfBeWM1aM3dtXvyydD2wfDFc9XwcpodCqBmgdXtBRzPm"
 
 [registry]
 url = "https://api.apr.dev"
 
+# CHANGE: Point provider at localnet to give deterministic test airdrops.
+# WHY: Devnet airdrops frequently fail and break automated REQ validation.
+# QUOTE(TЗ): "Тесты (минимум)" require reliable execution.
+# REF: REQ-INIT
+# SOURCE: n/a
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
+# CHANGE: Register ts-node for Anchor tests so .ts suites transpile before execution.
+# WHY: Node raised \"Cannot use import statement outside a module\" without ts-node hooks.
+# QUOTE(TЗ): "Написать Anchor-тесты, проверяющие..." (раздел 6).
+# REF: REQ-INIT
+# SOURCE: n/a
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""
+test = "NODE_OPTIONS='--loader ts-node/esm' yarn run ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""

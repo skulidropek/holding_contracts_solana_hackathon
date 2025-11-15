@@ -7,7 +7,9 @@
     "add-metadata": "ANCHOR_PROVIDER_URL=https://api.devnet.solana.com ANCHOR_WALLET=/home/user/.config/solana/id.json npx ts-node scripts/add-metadata.ts",
     "set-metadata": "ANCHOR_PROVIDER_URL=https://api.devnet.solana.com ANCHOR_WALLET=/home/user/.config/solana/id.json npx ts-node scripts/set-metadata.ts",
     "read-metadata": "ANCHOR_PROVIDER_URL=https://api.devnet.solana.com ANCHOR_WALLET=/home/user/.config/solana/id.json npx ts-node scripts/read-metadata.ts",
-    "create-token": "ANCHOR_PROVIDER_URL=https://api.devnet.solana.com ANCHOR_WALLET=/home/user/.config/solana/id.json npx ts-node scripts/create-token-with-metadata.ts"
+    "create-token": "ANCHOR_PROVIDER_URL=https://api.devnet.solana.com ANCHOR_WALLET=/home/user/.config/solana/id.json npx ts-node scripts/create-token-with-metadata.ts",
+    "// CHANGE:init-properties": "Batch initializer wiring JSON config to init_property",
+    "init-properties": "npx ts-node scripts/init-properties.ts"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
@@ -29,7 +31,12 @@
     "ts-mocha": "^10.0.0",
     "typescript": "^5.9.3"
   },
-  "name": "meme_token",
+  "// CHANGE": "Rename npm package to match property share focus.",
+  "// WHY": "Legacy meme token name no longer reflects functionality requested by user.",
+  "// QUOTE(TЗ)": "\"переиминовать проект ... что бы он правильно описывал\"",
+  "// REF": "USER-RENAME",
+  "// SOURCE": "n/a",
+  "name": "property_shares",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

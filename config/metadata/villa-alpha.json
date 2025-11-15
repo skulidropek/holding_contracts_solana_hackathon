@@ -1,0 +1,12 @@
+{
+  "name": "Villa Alpha",
+  "symbol": "VILLA",
+  "description": "Доли элитной виллы Alpha на побережье. Владельцы получают пропорциональный доход от аренды.",
+  "image": "https://example.com/images/villa-alpha.png",
+  "external_url": "https://example.com/properties/villa-alpha",
+  "attributes": [
+    { "trait_type": "Тип", "value": "Вилла" },
+    { "trait_type": "Локация", "value": "Средиземноморье" },
+    { "trait_type": "Площадь", "value": "420 м²" }
+  ]
+}
