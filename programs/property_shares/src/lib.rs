@@ -13,7 +13,7 @@ pub mod contexts;
 pub mod contract;
 
 // ВСТАВЬ СЮДА program id ИЗ `anchor keys list`
-declare_id!("DfBeWM1aM3dtXvyydD2wfDFc9XwcpodCqBmgdXtBRzPm");
+declare_id!("Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z");
 
 #[program]
 pub mod property_shares {

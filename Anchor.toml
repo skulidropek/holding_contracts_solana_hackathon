@@ -11,7 +11,7 @@ skip-lint = false
 # REF: USER-RENAME
 # SOURCE: n/a
 [programs.localnet]
-property_shares = "DfBeWM1aM3dtXvyydD2wfDFc9XwcpodCqBmgdXtBRzPm"
+property_shares = "Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z"
 
 [registry]
 url = "https://api.apr.dev"
