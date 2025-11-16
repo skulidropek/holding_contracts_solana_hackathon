@@ -6,9 +6,14 @@ resolution = true
 skip-lint = false
 
 # CHANGE: Declare program IDs for both local validator runs and devnet deploys.
-# WHY: Удобнее держать один и тот же id для разных кластеров, чтобы Anchor понимал куда деплоить.
-# QUOTE(TЗ): "Можешь исправить? ... Anchor всё ещё лезет на локальный валидатор"
+# WHY: It is simpler to reuse the same id across clusters so Anchor knows where to deploy.
+# QUOTE(TZ): "Can you fix it? ... Anchor still reaches out to the local validator"
 # REF: USER-DEPLOY
+# SOURCE: n/a
+# CHANGE: Translate configuration comments to English per localization requirement.
+# WHY: Build tooling settings must be readable by every contributor without mixed languages.
+# QUOTE(TZ): "Replace all Russian with English"
+# REF: USER-TRANSLATE
 # SOURCE: n/a
 [programs.localnet]
 property_shares = "Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z"
@@ -20,9 +25,9 @@ property_shares = "Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z"
 url = "https://api.apr.dev"
 
 [provider]
-# CHANGE: Жёстко прописываем devnet-URL, чтобы Anchor не пытался использовать localnet даже при неверных env.
-# WHY: Пользователь запускал deploy с переменными окружения, но CLI игнорировал их и соединялся с локальным RPC.
-# QUOTE(TЗ): "Anchor deploy всё ещё шлёт на http://127.0.0.1"
+# CHANGE: Hardcode the devnet URL so Anchor will not fall back to localnet even with incorrect env vars.
+# WHY: The user deployed with environment variables but the CLI ignored them and connected to local RPC.
+# QUOTE(TZ): "Anchor deploy still sends to http://127.0.0.1"
 # REF: USER-DEPLOY
 # SOURCE: https://www.anchor-lang.com/docs/anchor-toml#provider
 cluster = "https://api.devnet.solana.com"
@@ -30,7 +35,7 @@ wallet = "~/.config/solana/id.json"
 
 # CHANGE: Register ts-node for Anchor tests so .ts suites transpile before execution.
 # WHY: Node raised \"Cannot use import statement outside a module\" without ts-node hooks.
-# QUOTE(TЗ): "Написать Anchor-тесты, проверяющие..." (раздел 6).
+# QUOTE(TZ): "Write Anchor tests that verify..." (section 6).
 # REF: REQ-INIT
 # SOURCE: n/a
 [scripts]

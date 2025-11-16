@@ -3,8 +3,13 @@ import { BN } from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 // CHANGE: Applied deterministic formatting required by Prettier lint stage.
 // WHY: `yarn lint` failed due to style drift; aligning with formatter unblocks verification invariant.
-// QUOTE(TЗ): "Верификация: через линтер"
+// QUOTE(TZ): "Verification must run through the linter"
 // REF: REQ-LINT
+// SOURCE: n/a
+// CHANGE: Translate test rationale to English for localization compliance.
+// WHY: Contributors reviewing automated verification must read a single language.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
 // SOURCE: n/a
 import { expect } from "chai";
 import {
@@ -29,13 +34,13 @@ import { PropertyShares } from "../target/types/property_shares";
 
 // CHANGE: Replace placeholder test with coverage for property tokenization flows.
 // WHY: Need deterministic verification for REQ-INIT/REQ-BUY/REQ-DEPOSIT/REQ-CLAIM behavioural guarantees.
-// QUOTE(TЗ): "Написать Anchor-тесты" (см. раздел 6) covering init_property, buy_shares, deposit_yield, claim.
+// QUOTE(TZ): "Write Anchor tests" (see section 6) covering init_property, buy_shares, deposit_yield, claim.
 // REF: REQ-INIT,REQ-BUY,REQ-DEPOSIT,REQ-CLAIM
 // SOURCE: n/a
 describe("property_shares", () => {
   // CHANGE: Use `accountsStrict` to satisfy Anchor TS typing by explicitly specifying every account.
   // WHY: TypeScript error TS2353 occurred because `.accounts` disallows PDA-resolvable entries such as `property`.
-  // QUOTE(TЗ): "Верификация: через линтер" — type errors break verification stage.
+  // QUOTE(TZ): "Verification must run through the linter" — type errors break verification stage.
   // REF: USER-TS2353
   // SOURCE: n/a
   const provider = anchor.AnchorProvider.env();

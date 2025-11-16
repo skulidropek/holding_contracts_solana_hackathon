@@ -1,3 +1,8 @@
+// CHANGE: Translate initializer comments to English for localization compliance.
+// WHY: Script documentation must stay readable as part of the end-to-end workflow.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { BN } from "@coral-xyz/anchor";
@@ -13,8 +18,8 @@ import path from "node:path";
 import { PropertyShares } from "../target/types/property_shares";
 
 // CHANGE: Batch initializer reads JSON config and calls init_property per entry.
-// WHY: Users requested удобный способ описать несколько токенов через конфиг.
-// QUOTE(TЗ): "Можем иметь JSON конфиг ... в котором будут описаны все токены"
+// WHY: Users requested a convenient way to describe multiple tokens through a config file.
+// QUOTE(TZ): "Can we have a JSON config ... that describes all tokens"
 // REF: USER-ARCH
 // SOURCE: n/a
 

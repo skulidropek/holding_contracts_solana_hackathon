@@ -1,11 +1,11 @@
 {
   "name": "Villa Alpha",
   "symbol": "VILLA",
-  "description": "Доли элитной виллы Alpha на побережье. Владельцы получают пропорциональный доход от аренды.",
+  "description": "Fractional ownership of the luxury Villa Alpha on the coast. Holders receive proportional rental income.",
   "image": "https://raw.githubusercontent.com/skulidropek/holding_contracts_solana_hackathon/main/config/metadata/villa-alpha.svg",
   "attributes": [
-    { "trait_type": "Тип", "value": "Вилла" },
-    { "trait_type": "Локация", "value": "Средиземноморье" },
-    { "trait_type": "Площадь", "value": "420 м²" }
+    { "trait_type": "Type", "value": "Villa" },
+    { "trait_type": "Location", "value": "Mediterranean" },
+    { "trait_type": "Area", "value": "420 m^2" }
   ]
 }

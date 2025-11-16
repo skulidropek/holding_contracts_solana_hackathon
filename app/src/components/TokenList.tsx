@@ -1,7 +1,13 @@
-// CHANGE: Show an aggregated view of wallet token balances so пользователю понятно, какие токены появились.
-// WHY: После buy_shares человек видит только "Unknown" в Phantom, поэтому в UI отображаем mint, символ и количество.
-// QUOTE(TЗ): "А ты можешь сделать что бы мы отображали всю информацию включая токены которые есть"
+// CHANGE: Show an aggregated view of wallet token balances so the user understands which tokens appeared.
+// WHY: After calling buy_shares Phantom shows only "Unknown", so we display mint, symbol, and amount in the UI.
+// QUOTE(TZ): "Can you show all the information including which tokens exist"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate token list UI copy to English for localization.
+// WHY: Wallet summary text must follow the single-language invariant.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import "./TokenList.css";
 
 export interface TokenSummary {
@@ -21,8 +27,8 @@ export const TokenList = ({ tokens }: TokenListProps) => {
   return (
     <section className="token-panel">
       <header>
-        <h2>Ваши токены</h2>
-        <p>Балансы берутся напрямую c devnet RPC.</p>
+        <h2>Your tokens</h2>
+        <p>Balances are fetched directly from the devnet RPC.</p>
       </header>
       <ul>
         {tokens.map((token) => (

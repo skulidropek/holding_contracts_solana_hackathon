@@ -1,7 +1,13 @@
 // CHANGE: Wrap the SPA with Solana wallet providers for devnet access.
-// WHY: Без этих провайдеров React-компоненты не смогут выполнять Anchor RPC.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// WHY: Without these providers the React components cannot perform Anchor RPC calls.
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate initialization comments to English for localization.
+// WHY: Provider bootstrapping instructions must remain readable without Russian text.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { StrictMode, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -18,9 +24,15 @@ import { Buffer } from "buffer";
 import process from "process";
 
 // CHANGE: Polyfill Buffer/process for browser builds because SPL/Anchor libs expect Node globals.
-// WHY: Vite внешнеализует buffer, поэтому нужно вручную пробросить ссылки для фронтенда.
-// QUOTE(TЗ): "Вот что я получил ... Buffer is not defined"
+// WHY: Vite externalizes Buffer, so we must manually expose the references for the frontend bundle.
+// QUOTE(TZ): "Here is what I got ... Buffer is not defined"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate polyfill rationale to English per localization invariant.
+// WHY: Runtime troubleshooting notes must be consistent for all developers.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 if (typeof globalThis.Buffer === "undefined") {
   globalThis.Buffer = Buffer;
 }

@@ -1,7 +1,13 @@
 // CHANGE: Present a single property's state along with buy/deposit/claim controls.
-// WHY: Пользователь просил веб-интерфейс для управления токенами без CLI.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// WHY: The user asked for a web UI to manage tokens without the CLI.
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate card UI text to English to satisfy localization.
+// WHY: All user-facing instructions must live in one language for clarity.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { USDC_DECIMALS } from "../lib/constants";
@@ -32,12 +38,12 @@ export const PropertyCard = ({
     event.preventDefault();
     const parsed = Number(sharesInput);
     if (Number.isNaN(parsed) || parsed <= 0) {
-      setMessage("Введите корректное количество долей.");
+      setMessage("Enter a valid share amount.");
       return;
     }
     try {
       await onBuyShares(parsed);
-      setMessage(`Запрошена покупка ${parsed} долей.`);
+      setMessage(`Requested purchase of ${parsed} shares.`);
     } catch (buyError) {
       setMessage((buyError as Error).message);
     }
@@ -47,13 +53,13 @@ export const PropertyCard = ({
     event.preventDefault();
     const parsed = Number(depositInput);
     if (Number.isNaN(parsed) || parsed <= 0) {
-      setMessage("Введите сумму дохода в USDC.");
+      setMessage("Enter a yield amount in USDC.");
       return;
     }
     const micro = Math.round(parsed * MICRO_FACTOR);
     try {
       await onDepositYield(micro);
-      setMessage(`Отправлен депозит ${parsed.toFixed(2)} USDC.`);
+      setMessage(`Sent deposit of ${parsed.toFixed(2)} USDC.`);
     } catch (depositError) {
       setMessage((depositError as Error).message);
     }
@@ -62,7 +68,7 @@ export const PropertyCard = ({
   const handleClaim = async () => {
     try {
       await onClaim();
-      setMessage("Выплата успешно отправлена.");
+      setMessage("Payout submitted successfully.");
     } catch (claimError) {
       setMessage((claimError as Error).message);
     }
@@ -80,7 +86,7 @@ export const PropertyCard = ({
           <h2 className="card__title">
             {view.isInitialized
               ? view.config.tokenName
-              : "Требует init_property"}
+              : "Requires init_property"}
           </h2>
         </div>
         <a
@@ -95,30 +101,30 @@ export const PropertyCard = ({
 
       <dl className="card__stats">
         <div>
-          <dt>Цена за долю</dt>
+          <dt>Price per share</dt>
           <dd>{view.pricePerShareUi.toFixed(2)} USDC</dd>
         </div>
         <div>
-          <dt>Доступно долей</dt>
+          <dt>Available shares</dt>
           <dd>{view.availableShares.toString()}</dd>
         </div>
         <div>
-          <dt>Ваши доли</dt>
+          <dt>Your shares</dt>
           <dd>{view.userShares.toString()}</dd>
         </div>
         <div>
-          <dt>Баланс USDC</dt>
+          <dt>USDC balance</dt>
           <dd>{(Number(view.userUsdcBalance) / MICRO_FACTOR).toFixed(4)}</dd>
         </div>
         <div>
-          <dt>Доход к получению</dt>
+          <dt>Pending yield</dt>
           <dd>{pendingUi.toFixed(4)} USDC</dd>
         </div>
       </dl>
 
       <div className="card__info">
         <p>
-          <strong>Mint долей:</strong>{" "}
+          <strong>Share mint:</strong>{" "}
           <code>{view.addresses.mint.toBase58()}</code>
         </p>
         <p>
@@ -127,13 +133,13 @@ export const PropertyCard = ({
         </p>
         {view.userSharesAta && (
           <p>
-            <strong>Ваш ATA долей:</strong>{" "}
+            <strong>Your share ATA:</strong>{" "}
             <code>{view.userSharesAta.toBase58()}</code>
           </p>
         )}
         {view.userUsdcAta && (
           <p>
-            <strong>Ваш USDC ATA:</strong>{" "}
+            <strong>Your USDC ATA:</strong>{" "}
             <code>{view.userUsdcAta.toBase58()}</code>
           </p>
         )}
@@ -143,7 +149,7 @@ export const PropertyCard = ({
 
       <form className="card__form" onSubmit={handleBuy}>
         <label>
-          Купить долей
+          Buy shares
           <input
             type="number"
             min={1}
@@ -156,13 +162,13 @@ export const PropertyCard = ({
           type="submit"
           disabled={!walletConnected || !view.isInitialized}
         >
-          Купить
+          Buy
         </button>
       </form>
 
       <form className="card__form" onSubmit={handleDeposit}>
         <label>
-          Депозит дохода (USDC)
+          Deposit yield (USDC)
           <input
             type="number"
             min="0"
@@ -175,7 +181,7 @@ export const PropertyCard = ({
           type="submit"
           disabled={!walletConnected || !view.isAuthority}
         >
-          Отправить доход
+          Send yield
         </button>
       </form>
 
@@ -185,7 +191,7 @@ export const PropertyCard = ({
         onClick={() => void handleClaim()}
         disabled={!walletConnected || view.userShares === 0n}
       >
-        Забрать доход
+        Claim yield
       </button>
     </section>
   );

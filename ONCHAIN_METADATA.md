@@ -1,45 +1,50 @@
-# Хранение метаданных токена в блокчейне
+<!-- CHANGE: Translate the on-chain metadata guide to English. -->
+<!-- WHY: Documentation must remain readable without Russian text per the localization invariant. -->
+<!-- QUOTE(TZ): "Replace all Russian with English" -->
+<!-- REF: USER-TRANSLATE -->
+<!-- SOURCE: n/a -->
+# Storing Token Metadata On-Chain
 
-Теперь метаданные токена (название, символ, описание) можно хранить **прямо в блокчейне** без использования внешних ссылок!
+You can now keep token metadata (name, symbol, description) **directly on-chain** without referencing external URLs.
 
-## Что изменилось
+## What Changed
 
-Добавлена структура `TokenMetadata` в программу Anchor, которая хранит метаданные в отдельном аккаунте на блокчейне.
+We added a `TokenMetadata` struct to the Anchor program that stores metadata inside a dedicated on-chain account.
 
-### Структура метаданных
+### Metadata Structure
 
 ```rust
 pub struct TokenMetadata {
-    pub name: String,          // Название токена (максимум 64 символа)
-    pub symbol: String,        // Символ токена (максимум 16 символов)
-    pub description: String,   // Описание токена (максимум 512 символов)
-    pub image_uri: String,     // URI изображения (максимум 256 символов)
-    pub update_authority: Pubkey, // Владелец метаданных
+    pub name: String,          // Token name (up to 64 characters)
+    pub symbol: String,        // Token symbol (up to 16 characters)
+    pub description: String,   // Token description (up to 512 characters)
+    pub image_uri: String,     // Image URI (up to 256 characters)
+    pub update_authority: Pubkey, // Metadata owner
 }
 ```
 
-## Использование
+## Usage
 
-### 1. Установите метаданные
+### 1. Set the metadata
 
-Отредактируйте файл `scripts/set-metadata.ts` и установите ваши метаданные:
+Edit `scripts/set-metadata.ts` and provide your metadata:
 
 ```typescript
 const metadata = {
-  name: "Meme Token",                    // Максимум 64 символа
-  symbol: "MEME",                         // Максимум 16 символов
-  description: "Мой первый мем-токен на Solana! Хранится прямо в блокчейне.",
-  imageUri: "https://example.com/token-image.png", // Можно оставить пустым ""
+  name: "Meme Token",                    // Maximum 64 characters
+  symbol: "MEME",                        // Maximum 16 characters
+  description: "My first meme token on Solana! Stored directly on-chain.",
+  imageUri: "https://example.com/token-image.png", // Can be left as ""
 };
 ```
 
-### 2. Запустите скрипт
+### 2. Run the script
 
 ```bash
 npm run set-metadata
 ```
 
-Или с переменными окружения:
+Or with explicit environment variables:
 
 ```bash
 ANCHOR_PROVIDER_URL=https://api.devnet.solana.com \
@@ -47,15 +52,15 @@ ANCHOR_WALLET=/home/user/.config/solana/id.json \
 npx ts-node scripts/set-metadata.ts
 ```
 
-### 3. Проверьте метаданные
+### 3. Verify the metadata
 
-Метаданные хранятся в PDA аккаунте:
+Metadata lives in a PDA account:
 - Seeds: `["metadata", mint_address]`
-- Можно посмотреть в Solana Explorer по адресу метаданных аккаунта
+- You can inspect it via Solana Explorer using the metadata account address.
 
-## Чтение метаданных
+## Reading Metadata
 
-Метаданные можно прочитать прямо из программы или через TypeScript:
+The metadata can be read directly from the program or via TypeScript:
 
 ```typescript
 const [metadataPDA] = PublicKey.findProgramAddressSync(
@@ -63,35 +68,35 @@ const [metadataPDA] = PublicKey.findProgramAddressSync(
   program.programId
 );
 
-// Получаем аккаунт метаданных
+// Fetch the metadata account
 const metadataAccount = await program.account.tokenMetadata.fetch(metadataPDA);
 console.log("Name:", metadataAccount.name);
 console.log("Symbol:", metadataAccount.symbol);
 console.log("Description:", metadataAccount.description);
 ```
 
-## Преимущества хранения в блокчейне
+## Benefits of On-Chain Storage
 
-✅ **Надежность**: Метаданные всегда доступны, пока существует аккаунт  
-✅ **Независимость**: Не нужно полагаться на внешние хостинги  
-✅ **Прозрачность**: Все метаданные видны в блокчейне  
-✅ **Децентрализация**: Данные хранятся на всех узлах Solana  
+✅ **Reliability**: Metadata remains available while the account exists.  
+✅ **Independence**: No reliance on external hosting.  
+✅ **Transparency**: Everyone can inspect metadata directly on-chain.  
+✅ **Decentralization**: Data is replicated across all Solana validators.  
 
-## Ограничения
+## Limitations
 
-⚠️ **Размер данных**: Ограничен размерами строк (64 + 16 + 512 + 256 символов)  
-⚠️ **Изображения**: Изображения не хранятся в блокчейне, только URI  
-⚠️ **Стоимость**: Хранение данных в блокчейне требует оплаты за аренду аккаунта  
+⚠️ **Data size**: The combined string fields are capped (64 + 16 + 512 + 256 characters).  
+⚠️ **Images**: Only URIs are stored, not the binary asset.  
+⚠️ **Cost**: On-chain storage requires rent for the account.  
 
-## Пример использования
+## Example
 
 ```typescript
-// Установка метаданных
+// Setting metadata
 await program.methods
   .setMetadata(
     "Meme Token",
     "MEME",
-    "Описание токена",
+    "Token description",
     "https://example.com/image.png"
   )
   .accounts({
@@ -102,16 +107,15 @@ await program.methods
   })
   .rpc();
 
-// Чтение метаданных
+// Reading metadata
 const metadata = await program.account.tokenMetadata.fetch(metadataPDA);
 console.log(metadata.name); // "Meme Token"
 ```
 
-## Обновление метаданных
+## Updating Metadata
 
-Метод `set_metadata` использует `init_if_needed`, что означает:
-- Если метаданные не существуют - они будут созданы
-- Если метаданные уже существуют - они будут обновлены
+The `set_metadata` method uses `init_if_needed`, which means:
+- If metadata does not exist, it is created.
+- If metadata already exists, it is updated in place.
 
-Просто запустите скрипт повторно с новыми данными!
-
+Simply rerun the script with your new data.

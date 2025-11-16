@@ -1,7 +1,13 @@
 /* CHANGE: Style the dashboard layout instead of the default Vite placeholder. */
-/* WHY: Новый фронтенд должен выглядеть как рабочее приложение, а не демо. */
-/* QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт" */
+/* WHY: The new frontend must feel like a production app rather than a demo. */
+/* QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript" */
 /* REF: USER-FRONTEND */
+/* SOURCE: n/a */
+/* CHANGE: Translate layout rationale to English per localization request. */
+/* WHY: Keeping UI copy consistent across languages preserves the UX invariant. */
+/* QUOTE(TZ): "Replace all Russian with English" */
+/* REF: USER-TRANSLATE */
+/* SOURCE: n/a */
 
 #root {
   max-width: 1100px;

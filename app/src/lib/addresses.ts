@@ -1,7 +1,13 @@
 // CHANGE: Provide PDA/ATA derivation helpers mirroring on-chain seeds.
 // WHY: Frontend actions (buy, deposit, claim) must target exact accounts derived inside the Anchor program.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate helper documentation to English for localization.
+// WHY: Deterministic derivation steps are part of the cross-team invariant and must be readable in English.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,

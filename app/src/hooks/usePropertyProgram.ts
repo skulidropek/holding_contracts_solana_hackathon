@@ -1,7 +1,13 @@
 // CHANGE: Wrap Anchor provider/program wiring inside a hook for reuse across UI components.
 // WHY: Frontend requests rely on the same connection/provider config that Anchor CLI uses.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate hook documentation to English per localization task.
+// WHY: Shared hook invariants must be readable to every contributor.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import type { Wallet } from "@coral-xyz/anchor";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";

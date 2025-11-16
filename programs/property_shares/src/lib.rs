@@ -1,3 +1,8 @@
+// CHANGE: Translate program file annotations to English for localization compliance.
+// WHY: Program-level invariants should be consistent across the repo without mixed languages.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token,
@@ -13,7 +18,7 @@ use crate::{
 pub mod contexts;
 pub mod contract;
 
-// ВСТАВЬ СЮДА program id ИЗ `anchor keys list`
+// INSERT THE program id FROM `anchor keys list` HERE
 declare_id!("Bvq9mwXmV95Mz848zK8FZ11JiKfLjGc7savK5u657H9Z");
 
 #[program]
@@ -22,7 +27,7 @@ pub mod property_shares {
 
     // CHANGE: init_property wires SPL mint/vault/pool using modular architecture.
     // WHY: Rebranded project requires clear initialization boundary per new architecture.
-    // QUOTE(TЗ): "переиминовать проект ... И сделать хоть какую-то архитектуру"
+    // QUOTE(TZ): "rename the project ... and implement at least some architecture"
     // REF: USER-RENAME
     // SOURCE: n/a
     pub fn init_property(

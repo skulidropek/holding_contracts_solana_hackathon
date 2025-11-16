@@ -1,3 +1,8 @@
+// CHANGE: Translate context documentation to English for the localization task.
+// WHY: Anchor context files define public invariants that must be readable without Russian text.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
@@ -11,7 +16,7 @@ use crate::contract::{
 
 // CHANGE: Group Anchor context structs to improve modularity and clarity.
 // WHY: Separating account validation rules from instruction logic aids maintainability.
-// QUOTE(TЗ): "сделать хоть какую-то архитектуру"
+// QUOTE(TZ): "implement at least some architecture"
 // REF: USER-RENAME
 // SOURCE: n/a
 #[derive(Accounts)]

@@ -1,7 +1,13 @@
 // CHANGE: Replace the Vite placeholder with a Solana dashboard for property_shares.
-// WHY: Пользователь хочет проверять бизнес-логику (buy/deposit/claim) через браузер.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// WHY: The user wants to exercise the business logic (buy/deposit/claim) via the browser.
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Localize UI strings to English as requested.
+// WHY: Keeping all visible copy in English ensures consistent user experience per the localization invariant.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useMemo } from "react";
@@ -64,24 +70,24 @@ const App = () => {
       <header className="app__header">
         <div>
           <p className="app__eyebrow">property_shares</p>
-          <h1>Devnet панель</h1>
-          <p>Здесь можно покупать доли, депонировать доход и получать reward.</p>
+          <h1>Devnet control panel</h1>
+          <p>You can buy shares, deposit income, and claim rewards here.</p>
         </div>
         <WalletMultiButton className="wallet-button" />
       </header>
 
       <section className="app__toolbar">
         <button onClick={() => void refresh()} disabled={loading}>
-          Обновить состояние
+          Refresh state
         </button>
         <span>
           {wallet
             ? `Phantom: ${wallet.publicKey.toBase58()}`
-            : "Подключите Phantom"}
+            : "Connect Phantom"}
         </span>
       </section>
 
-      {loading && <p className="app__status">Загружаем состояние сети...</p>}
+      {loading && <p className="app__status">Loading network state...</p>}
       {error && <p className="app__error">{error}</p>}
 
       {wallet && <TokenList tokens={walletTokens} />}

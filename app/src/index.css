@@ -1,7 +1,13 @@
 /* CHANGE: Provide dark theme defaults tailored for the dashboard layout. */
-/* WHY: Базовые стили Vite не подходят для DeFi панели. */
-/* QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт" */
+/* WHY: The default Vite styles are not suitable for a DeFi control panel. */
+/* QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript" */
 /* REF: USER-FRONTEND */
+/* SOURCE: n/a */
+/* CHANGE: Translate styling rationale to English to satisfy localization. */
+/* WHY: Shared UI guidelines should live in a single language for consistency. */
+/* QUOTE(TZ): "Replace all Russian with English" */
+/* REF: USER-TRANSLATE */
+/* SOURCE: n/a */
 :root {
   font-family: "JetBrains Mono", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;

@@ -1,7 +1,13 @@
 // CHANGE: Centralize frontend constants to keep blockchain configuration deterministic.
 // WHY: React UI must share the same seeds/program identifiers as the on-chain contract to derive PDAs consistently.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate frontend commentary to English for localization compliance.
+// WHY: Shared constants document invariants that every developer must understand in a single language.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { PublicKey } from "@solana/web3.js";
 
 /** URL of the devnet RPC that mirrors Anchor.toml provider configuration. */

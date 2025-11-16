@@ -1,7 +1,13 @@
 // CHANGE: Bundle state management and contract mutations for the React UI.
-// WHY: Пользователь запросил фронтенд, который может читать состояние и вызывать инструкции buy/claim/deposit.
-// QUOTE(TЗ): "а можеш реализовать готовый фронтенд? Используй React, Vite. Пиши на тайп скрипт"
+// WHY: The user requested a frontend that can read state and invoke buy/claim/deposit instructions.
+// QUOTE(TZ): "Can you build a finished frontend? Use React, Vite. Write it in TypeScript"
 // REF: USER-FRONTEND
+// SOURCE: n/a
+// CHANGE: Translate hook logic and user-facing errors to English per localization request.
+// WHY: UX and debugging strings must remain consistent for all stakeholders.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 import { AnchorProvider, BN, Program } from "@coral-xyz/anchor";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { SystemProgram, PublicKey, Transaction } from "@solana/web3.js";
@@ -116,16 +122,17 @@ export const usePropertyShares = (): PropertyActions => {
   const [error, setError] = useState<string | null>(null);
 
   // CHANGE: Log key user actions to help diagnose repeated Phantom prompts.
-  // WHY: Пользователь попросил “залогировать фронт часть” для отслеживания транзакций.
-  // QUOTE(TЗ): "Залогируй фронт часть Что бы отслеживать как работать"
+  // WHY: The user asked to "log the frontend part" to track how transactions flow.
+  // QUOTE(TZ): "Log the frontend part so we can track how it works"
   // REF: USER-LOGS
+  // SOURCE: n/a
   const logEvent = (label: string, payload: Record<string, unknown> = {}): void => {
     console.debug(`[property_shares] ${label}`, payload);
   };
 
   const ensureActionContext = (): ActionContext => {
     if (!program || !wallet || !provider) {
-      throw new Error("Подключите кошелёк Phantom для выполнения транзакций.");
+      throw new Error("Connect a Phantom wallet to execute transactions.");
     }
     return { program, wallet, provider };
   };
@@ -275,10 +282,10 @@ export const usePropertyShares = (): PropertyActions => {
       (item) => item.config.propertyId === propertyId,
     );
     if (!view) {
-      throw new Error("Не удалось найти указанный propertyId.");
+      throw new Error("Failed to find the specified propertyId.");
     }
     if (!view.isInitialized) {
-      throw new Error("Property ещё не инициализирован on-chain.");
+      throw new Error("The property is not initialized on-chain yet.");
     }
     return view;
   };
@@ -301,7 +308,7 @@ export const usePropertyShares = (): PropertyActions => {
   const buyShares = async (propertyId: string, amount: number) => {
     await runAction(async () => {
       if (amount <= 0) {
-        throw new Error("Количество долей должно быть больше нуля.");
+        throw new Error("Share amount must be greater than zero.");
       }
       const { program: liveProgram, wallet: liveWallet, provider: liveProvider } =
         ensureActionContext();
@@ -347,13 +354,13 @@ export const usePropertyShares = (): PropertyActions => {
   const depositYield = async (propertyId: string, microUsdc: number) => {
     await runAction(async () => {
       if (microUsdc <= 0) {
-        throw new Error("Сумма депозита должна быть положительной.");
+        throw new Error("Deposit amount must be positive.");
       }
       const { program: liveProgram, wallet: liveWallet, provider: liveProvider } =
         ensureActionContext();
       const view = findView(propertyId);
       if (!view.isAuthority) {
-        throw new Error("Только authority может депонировать доход.");
+        throw new Error("Only the authority can deposit yield.");
       }
       logEvent("depositYield:start", { propertyId, microUsdc });
       const authorityUsdcAta = await ensureAtaExists(
@@ -390,7 +397,7 @@ export const usePropertyShares = (): PropertyActions => {
         ensureActionContext();
       const view = findView(propertyId);
       if (view.userShares === 0n) {
-        throw new Error("Нет долей для получения дохода.");
+        throw new Error("No shares available to claim rewards.");
       }
       logEvent("claim:start", {
         propertyId,

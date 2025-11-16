@@ -1,53 +1,58 @@
-# Добавление метаданных к токену
+<!-- CHANGE: Translate token metadata guidance to English. -->
+<!-- WHY: Documentation must no longer contain Russian text to respect the localization invariant. -->
+<!-- QUOTE(TZ): "Replace all Russian with English" -->
+<!-- REF: USER-TRANSLATE -->
+<!-- SOURCE: n/a -->
+# Adding Token Metadata
 
-Для добавления метаданных (название, символ, изображение) к вашему токену нужно использовать Metaplex Token Metadata стандарт.
+To attach metadata (name, symbol, image) to your token you must use the Metaplex Token Metadata standard.
 
-## Проблема
+## Problem
 
-В вашем контракте **mint authority** - это сам mint (PDA), а не wallet пользователя. Это означает, что для создания метаданных нужно подписать транзакцию от имени PDA, что требует вызова через вашу программу.
+In this contract the **mint authority** is the mint PDA itself rather than a user wallet. Therefore, creating metadata requires signing on behalf of the PDA, which must be invoked through your program.
 
-## Решения
+## Solutions
 
-### Вариант 1: Использовать Metaplex CLI (Рекомендуется)
+### Option 1: Use the Metaplex CLI (Recommended)
 
-Самый простой способ - использовать Metaplex CLI:
+The simplest route is the Metaplex CLI:
 
 ```bash
-# Установите Metaplex CLI
+# Install the Metaplex CLI
 npm install -g @metaplex-foundation/metaplex-cli
 
-# Создайте метаданные JSON файл
+# Create the metadata JSON file
 cat > metadata.json << EOF
 {
   "name": "Meme Token",
   "symbol": "MEME",
-  "description": "Мой мем-токен",
+  "description": "My meme token",
   "image": "https://example.com/your-image.png",
   "external_url": "https://example.com"
 }
 EOF
 
-# Загрузите метаданные (требует создания инструкции в программе)
+# Upload the metadata (requires adding an instruction to your program)
 ```
 
-### Вариант 2: Добавить функцию в программу
+### Option 2: Add a function in the program
 
-Добавьте функцию `create_metadata` в программу Rust, которая будет создавать метаданные через CPI к Metaplex Token Metadata программе.
+Implement a `create_metadata` function inside the Rust program that performs a CPI into the Metaplex Token Metadata program.
 
-### Вариант 3: Использовать внешние инструменты
+### Option 3: Use external tooling
 
 - Metaplex UI: https://www.metaplex.com/
 - Token Creator: https://github.com/creator-platform/token-creator
 
-## Структура JSON метаданных
+## Metadata JSON Structure
 
-Создайте JSON файл со следующей структурой:
+Create a JSON file shaped like this:
 
 ```json
 {
   "name": "Meme Token",
   "symbol": "MEME",
-  "description": "Описание вашего токена",
+  "description": "Description of your token",
   "image": "https://example.com/your-image.png",
   "external_url": "https://example.com",
   "attributes": [
@@ -59,12 +64,11 @@ EOF
 }
 ```
 
-1. Загрузите изображение на IPFS (например, через Pinata: https://www.pinata.cloud/) или другой хостинг
-2. Замените `image` на URL вашего изображения
-3. Загрузите JSON файл на IPFS или хостинг
-4. Используйте URL JSON файла как URI в метаданных токена
+1. Upload the image to IPFS (for example via Pinata: https://www.pinata.cloud/) or any hosting provider.
+2. Replace the `image` field with the URL of your hosted asset.
+3. Upload the JSON file to IPFS or any hosting provider.
+4. Use the JSON URL as the metadata URI for the token.
 
-## Примечание
+## Note
 
-Текущий скрипт `scripts/add-metadata.ts` требует доработки для работы с PDA signer. Для полноценной работы нужно либо добавить функцию в программу Rust, либо использовать внешние инструменты.
-
+The current `scripts/add-metadata.ts` script still needs PDA signer support. Either add the helper function to the Rust program or leverage the external tools mentioned above.

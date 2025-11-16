@@ -46,8 +46,13 @@ const anchor = __importStar(require("@coral-xyz/anchor"));
 const anchor_1 = require("@coral-xyz/anchor");
 // CHANGE: Applied deterministic formatting required by Prettier lint stage.
 // WHY: `yarn lint` failed due to style drift; aligning with formatter unblocks verification invariant.
-// QUOTE(TЗ): "Верификация: через линтер"
+// QUOTE(TZ): "Verification must run through the linter"
 // REF: REQ-LINT
+// SOURCE: n/a
+// CHANGE: Translate compiled test rationale to English per localization request.
+// WHY: Even generated JS artifacts should not contain Russian comments for clarity.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
 // SOURCE: n/a
 const chai_1 = require("chai");
 const spl_token_1 = require("@solana/spl-token");
@@ -55,13 +60,13 @@ const web3_js_1 = require("@solana/web3.js");
 const mpl_token_metadata_1 = require("@metaplex-foundation/mpl-token-metadata");
 // CHANGE: Replace placeholder test with coverage for property tokenization flows.
 // WHY: Need deterministic verification for REQ-INIT/REQ-BUY/REQ-DEPOSIT/REQ-CLAIM behavioural guarantees.
-// QUOTE(TЗ): "Написать Anchor-тесты" (см. раздел 6) covering init_property, buy_shares, deposit_yield, claim.
+// QUOTE(TZ): "Write Anchor tests" (see section 6) covering init_property, buy_shares, deposit_yield, claim.
 // REF: REQ-INIT,REQ-BUY,REQ-DEPOSIT,REQ-CLAIM
 // SOURCE: n/a
 describe("property_shares", () => {
     // CHANGE: Use `accountsStrict` to satisfy Anchor TS typing by explicitly specifying every account.
     // WHY: TypeScript error TS2353 occurred because `.accounts` disallows PDA-resolvable entries such as `property`.
-    // QUOTE(TЗ): "Верификация: через линтер" — type errors break verification stage.
+    // QUOTE(TZ): "Verification must run through the linter" — type errors break verification stage.
     // REF: USER-TS2353
     // SOURCE: n/a
     const provider = anchor.AnchorProvider.env();

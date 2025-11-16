@@ -1,10 +1,15 @@
+// CHANGE: Translate state documentation to English per localization request.
+// WHY: Account layout comments describe invariants that must be understandable to all contributors.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 use anchor_lang::prelude::*;
 
 use super::constants::MAX_METADATA_URI_LEN;
 
 // CHANGE: Housing Anchor account structs under contract module for better architecture boundaries.
 // WHY: Dedicated folder clarifies where account layouts/config reside.
-// QUOTE(TЗ): "конфиг ... в отдельной папке"
+// QUOTE(TZ): "store the config in a separate folder"
 // REF: USER-ARCH
 // SOURCE: n/a
 #[account]

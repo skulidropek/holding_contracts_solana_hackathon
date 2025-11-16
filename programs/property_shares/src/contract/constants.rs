@@ -1,6 +1,11 @@
+// CHANGE: Translate contract constant documentation to English to satisfy localization.
+// WHY: Shared invariants should be readable in a single language across the repo.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 // CHANGE: Store protocol-wide constants/seeds inside dedicated contract namespace.
 // WHY: Satisfies request for clear configuration folder under `programs/property_shares`.
-// QUOTE(TЗ): "конфиг хранить в отдельной папке ... папка называться будет контракт"
+// QUOTE(TZ): "store config inside a dedicated folder ... the folder will be called contract"
 // REF: USER-ARCH
 // SOURCE: n/a
 pub const SCALE: u128 = 1_000_000_000_000;

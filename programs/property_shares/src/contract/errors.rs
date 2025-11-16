@@ -1,8 +1,13 @@
+// CHANGE: Translate error catalog rationale to English.
+// WHY: Error invariants must remain readable to everyone auditing the contract.
+// QUOTE(TZ): "Replace all Russian with English"
+// REF: USER-TRANSLATE
+// SOURCE: n/a
 use anchor_lang::prelude::*;
 
 // CHANGE: Relocate error catalog to contract namespace for clarity.
 // WHY: Users requested a dedicated contract folder for configs/invariants.
-// QUOTE(TЗ): "конфиг ... папка ... контракт"
+// QUOTE(TZ): "store the config in a folder named contract"
 // REF: USER-ARCH
 // SOURCE: n/a
 #[error_code]

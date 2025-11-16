@@ -6,7 +6,7 @@
     "tokenName": "Villa Alpha Share",
     "tokenSymbol": "VILLA",
     "pricePerShare": 2000000,
-    "_comment": "// CHANGE: Use devnet test USDC mint created via spl-token create-token.\\n// WHY: Стандартный Gh9Z... отсутствует на devnet, из-за чего init_property падал с AccountNotInitialized.\\n// QUOTE(TЗ): \"А токены создались или как? ... yarn init-properties\"\\n// REF: USER-DEPLOY\\n// SOURCE: solana account Gh9Z... показал AccountNotFound",
+    "_comment": "// CHANGE: Use devnet test USDC mint created via spl-token create-token.\\n// WHY: The default Gh9Z... mint is missing on devnet, so init_property crashed with AccountNotInitialized.\\n// QUOTE(TZ): \"Did the tokens get created or what? ... yarn init-properties\"\\n// REF: USER-DEPLOY\\n// SOURCE: solana account Gh9Z... returned AccountNotFound",
     "usdcMint": "Qkw4FajST5m3z9dtcD5QwX5cn1WfiAcmVsNhqtgJBvB"
   }
 ]
