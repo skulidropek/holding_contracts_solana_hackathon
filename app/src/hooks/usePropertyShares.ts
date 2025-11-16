@@ -55,6 +55,8 @@ export interface PropertyView {
   userUsdcAta: PublicKey | null;
   userSharesAta: PublicKey | null;
   pendingRewards: bigint;
+  vaultUsdcBalance: bigint;
+  poolUsdcBalance: bigint;
   isAuthority: boolean;
   addresses: ReturnType<typeof deriveCoreAddresses>;
   usdcMint: PublicKey;
@@ -149,7 +151,7 @@ export const usePropertyShares = (): PropertyActions => {
           const propertyAccount =
             await program.account.property.fetchNullable(addresses.property);
           if (!propertyAccount) {
-            return {
+            const snapshot = {
               config,
               isInitialized: false,
               pricePerShareUi: config.pricePerShare / USDC_FACTOR,
@@ -159,11 +161,18 @@ export const usePropertyShares = (): PropertyActions => {
               userUsdcAta: null,
               userSharesAta: null,
               pendingRewards: 0n,
+              vaultUsdcBalance: 0n,
+              poolUsdcBalance: 0n,
               isAuthority: false,
               addresses,
               usdcMint,
               atas,
             };
+            logEvent("state", {
+              propertyId: config.propertyId,
+              initialized: false,
+            });
+            return snapshot;
           }
 
           const vaultBalance = await fetchTokenAmount(
@@ -189,6 +198,14 @@ export const usePropertyShares = (): PropertyActions => {
               : 0n;
 
           const poolAccount = await program.account.pool.fetch(addresses.pool);
+          const vaultUsdcBalance = await fetchTokenAmount(
+            connection,
+            atas.vaultUsdcAta,
+          );
+          const poolUsdcBalance = await fetchTokenAmount(
+            connection,
+            atas.poolUsdcAta,
+          );
           const userReward =
             wallet?.publicKey !== undefined
               ? await program.account.userReward.fetchNullable(
@@ -208,7 +225,7 @@ export const usePropertyShares = (): PropertyActions => {
               ? (positiveDelta * userBalance) / ACC_SCALE
               : 0n;
 
-          return {
+          const snapshot: PropertyView = {
             config,
             isInitialized: true,
             pricePerShareUi: config.pricePerShare / USDC_FACTOR,
@@ -218,6 +235,8 @@ export const usePropertyShares = (): PropertyActions => {
             userUsdcAta,
             userSharesAta: userShareAta,
             pendingRewards: pending,
+            vaultUsdcBalance,
+            poolUsdcBalance,
             isAuthority:
               wallet?.publicKey !== undefined &&
               wallet.publicKey.equals(propertyAccount.authority),
@@ -225,6 +244,16 @@ export const usePropertyShares = (): PropertyActions => {
             usdcMint,
             atas,
           };
+          logEvent("state", {
+            propertyId: config.propertyId,
+            availableShares: vaultBalance.toString(),
+            userShares: userBalance.toString(),
+            userUsdc: userUsdcBalance.toString(),
+            vaultUsdc: vaultUsdcBalance.toString(),
+            poolUsdc: poolUsdcBalance.toString(),
+            pending: pending.toString(),
+          });
+          return snapshot;
         }),
       );
       setProperties(views);
@@ -277,7 +306,7 @@ export const usePropertyShares = (): PropertyActions => {
       const { program: liveProgram, wallet: liveWallet, provider: liveProvider } =
         ensureActionContext();
       const view = findView(propertyId);
-      logEvent("buyShares", { propertyId, amount });
+      logEvent("buyShares:start", { propertyId, amount });
       const userUsdcAta = await ensureAtaExists(
         connection,
         liveProvider,
@@ -290,7 +319,7 @@ export const usePropertyShares = (): PropertyActions => {
         view.addresses.mint,
         liveWallet.publicKey,
       );
-      await liveProgram.methods
+      const signature = await liveProgram.methods
         .buyShares(new BN(amount))
         .accountsStrict({
           property: view.addresses.property,
@@ -305,6 +334,13 @@ export const usePropertyShares = (): PropertyActions => {
           tokenProgram: SPL_PROGRAM_ID,
         })
         .rpc();
+      logEvent("buyShares:complete", {
+        propertyId,
+        amount,
+        signature,
+        userSharesAta: userSharesAta.toBase58(),
+        userUsdcAta: userUsdcAta.toBase58(),
+      });
     });
   };
 
@@ -319,14 +355,14 @@ export const usePropertyShares = (): PropertyActions => {
       if (!view.isAuthority) {
         throw new Error("Только authority может депонировать доход.");
       }
-      logEvent("depositYield", { propertyId, microUsdc });
+      logEvent("depositYield:start", { propertyId, microUsdc });
       const authorityUsdcAta = await ensureAtaExists(
         connection,
         liveProvider,
         view.usdcMint,
         liveWallet.publicKey,
       );
-      await liveProgram.methods
+      const signature = await liveProgram.methods
         .depositYield(new BN(microUsdc))
         .accountsStrict({
           authority: liveWallet.publicKey,
@@ -339,6 +375,12 @@ export const usePropertyShares = (): PropertyActions => {
           tokenProgram: SPL_PROGRAM_ID,
         })
         .rpc();
+      logEvent("depositYield:complete", {
+        propertyId,
+        microUsdc,
+        signature,
+        poolUsdcAta: view.atas.poolUsdcAta.toBase58(),
+      });
     });
   };
 
@@ -350,7 +392,10 @@ export const usePropertyShares = (): PropertyActions => {
       if (view.userShares === 0n) {
         throw new Error("Нет долей для получения дохода.");
       }
-      logEvent("claim", { propertyId });
+      logEvent("claim:start", {
+        propertyId,
+        pending: view.pendingRewards.toString(),
+      });
       const userSharesAta = await ensureAtaExists(
         connection,
         liveProvider,
@@ -363,7 +408,7 @@ export const usePropertyShares = (): PropertyActions => {
         view.usdcMint,
         liveWallet.publicKey,
       );
-      await liveProgram.methods
+      const signature = await liveProgram.methods
         .claim()
         .accountsStrict({
           user: liveWallet.publicKey,
@@ -382,6 +427,12 @@ export const usePropertyShares = (): PropertyActions => {
           systemProgram: SystemProgram.programId,
         })
         .rpc();
+      logEvent("claim:complete", {
+        propertyId,
+        signature,
+        userSharesAta: userSharesAta.toBase58(),
+        userUsdcAta: userUsdcAta.toBase58(),
+      });
     });
   };
 
